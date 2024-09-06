@@ -1,0 +1,112 @@
+.main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+.input-container {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.text-section {
+    display: flex;
+    flex-direction: column;
+    margin-right: 20px;
+}
+
+.text-section h2 {
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 35px;
+    margin-bottom: 40px;
+}
+
+.text-section form {
+    display: flex;
+    flex-direction: column;
+}
+
+.text-section input {
+    margin-bottom: 10px;
+    padding: 10px;
+    width: 400px;
+    border-radius: 40px;
+    height: 25px;
+    font-size: 15px;
+    border: 2px solid #ccc;
+}
+
+.text-section input:focus {
+    border-color: #007bff;
+    outline: none; 
+}
+
+input.invalid-on-submit {
+    border-color: red;
+}
+
+input.invalid-on-submit + label {
+    color: red;
+}
+
+.button-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.button-section button {
+    width: 170px;
+    height: 40px;
+    margin-bottom: 10px;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    border-radius: 30px;
+    background: linear-gradient(45deg, #007bff, #66b3ff);
+    color: white;
+    margin-right: 15px;
+    font-size: 15px;
+    font-weight: bold;
+    transition: transform 0.3s ease, background 0.5s ease;
+}
+
+.button-section button:last-child {
+    margin-right: 0;
+}
+
+.button-section button:hover {
+    transform: scale(1.1);
+    background: linear-gradient(45deg, #0056b3, #3399ff);
+}
+
+.image-section {
+    align-items: center;
+    justify-content: center;
+}
+
+label {
+    position: absolute;
+    top: 10px; /* Ajuste conforme necessário */
+    left: 10px; /* Ajuste conforme necessário */
+    font-size: 16px;
+    color: #999;
+    pointer-events: none;
+    transition: all 0.3s ease;
+    background: white; /* Fundo transparente para o label */
+    padding: 0 5px; /* Ajusta o espaço ao redor do texto */
+    margin: 0; /* Remove qualquer margem adicional */
+}
+
+input:focus + label,
+input:not(:placeholder-shown) + label {
+    top: -10px; /* Move o label para cima */
+    left: 10px; /* Alinha o label com o input */
+    font-size: 12px; /* Reduz o tamanho da fonte do label */
+    color: #007bff; /* Altera a cor do label quando o input é focado ou contém texto */
+}

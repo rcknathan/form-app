@@ -1,15 +1,29 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import PasswordStrengthChecker from './PasswordStrengthChecker';
+
+import '../styles/General.css';
+import '../styles/Register.css';
 
 function Register() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [passwordStrength, setPasswordStrength] = useState(0); // Novo estado para guardar a força da senha
     const navigate = useNavigate();
+
+    // Função para verificar se a senha é forte o suficiente
+    const isPasswordStrongEnough = () => passwordStrength >= 4; // 4 = forte ou muito forte
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        if (!isPasswordStrongEnough()) {
+            alert('A senha deve ser forte ou muito forte.');
+            return; // Não permite o envio se a senha não for forte o suficiente
+        }
+
         try {
             await axios.post('http://localhost:4000/register', { username, email, password });
             alert('Registro bem-sucedido!');
@@ -20,33 +34,50 @@ function Register() {
         }
     };
 
+    const goToLogin = () => {
+        navigate('/login');
+    };
+
     return (
-        <div>
-            <h2>Registro</h2>
-            <form onSubmit={handleSubmit}>
-                <input
-                    type="text"
-                    placeholder="Username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
-                />
-                <input
-                    type="email"
-                    placeholder="Email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    required
-                />
-                <button type="submit">Registrar</button>
-            </form>
+        <div className="main">
+            <div className="table-register">
+                <div className="text-section">
+                    <h2>REGISTRO</h2>
+                        <form onSubmit={handleSubmit}>
+                            <div class="inputs-register">
+                                <div className="input-container">
+                                    <input
+                                        type="text"
+                                        value={username}
+                                        placeholder=""
+                                        onChange={(e) => setUsername(e.target.value)}
+                                        required
+                                    />
+                                    <label htmlFor="username">Username</label>
+                                </div>
+                                <div className="input-container">
+                                    <input
+                                        type="email"
+                                        value={email}
+                                        placeholder=""
+                                        onChange={(e) => setEmail(e.target.value)}
+                                        required
+                                    />
+                                    <label htmlFor="email">Email</label>
+                                </div>
+                                <PasswordStrengthChecker 
+                                    password={password} 
+                                    setPassword={setPassword} 
+                                    setPasswordStrength={setPasswordStrength} 
+                                />
+                            </div>
+                        <div className="button-section">
+                            <button type="submit">REGISTRAR</button>
+                            <button onClick={goToLogin}>VOLTAR AO LOGIN</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     );
 }

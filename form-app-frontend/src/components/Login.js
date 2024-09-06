@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import loginImage from '../images/login-img.png';
 
+import '../styles/General.css';
 import '../styles/Login.css';
 
 function Login() {
@@ -27,7 +28,7 @@ function Login() {
     };
 
     return (
-        <div class="main-login">
+        <div class="main">
             <div class="table-login">
                 <div className="image-section">
                     <img src={loginImage} alt="Login" className="login-image" />
@@ -43,7 +44,7 @@ function Login() {
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
                                 />
-                                <label for="username">Email</label>
+                                <label for="email">Email</label>
                             </div>
                             <div class="input-container">
                                 <input
@@ -53,7 +54,7 @@ function Login() {
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                 />
-                                <label for="username">Senha</label>
+                                <label for="password">Senha</label>
                             </div>
                             <div class="button-section">
                                 <button type="submit">ENTRAR</button>
