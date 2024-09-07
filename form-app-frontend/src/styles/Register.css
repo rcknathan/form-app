@@ -53,8 +53,14 @@
     margin-bottom: 10px;
 }
 
-.password-error {
+.error {
     color: #ff5959;
+    animation: slideUpFadeIn 0.8s ease-out;
+    font-size: 15px;
+}
+
+.success {
+    color: #22a414;
     animation: slideUpFadeIn 0.8s ease-out;
     font-size: 15px;
 }
