@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import profileImage from '../images/profile-img.png';
+
+import '../styles/Profile.css';
 
 function Profile() {
     const [user, setUser] = useState(null);
@@ -30,16 +33,23 @@ function Profile() {
     }, [navigate]);
 
     return (
-        <div>
-            <h2>Perfil</h2>
-            {user ? (
-                <div>
-                    <p>Username: {user.username}</p>
-                    <p>Email: {user.email}</p>
+        <div class="main-profile">
+            <div class="header">
+                <h2>Meu Perfil</h2>
+            </div>
+            <div class="body">
+                <div class="profile-table">
+                    <div class="profile-section">
+                        <img src={profileImage} alt="Login" className="profile-image" />
+                        {user ? (
+                            <p>@{user.username}</p>
+                        ) : (
+                            <p>Carregando...</p>
+                        )}
+                    </div>
+                    <hr class="separator"></hr>
                 </div>
-            ) : (
-                <p>Carregando...</p>
-            )}
+            </div>
         </div>
     );
 }
