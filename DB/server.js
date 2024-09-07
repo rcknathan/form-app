@@ -23,13 +23,13 @@ app.post('/register', async (req, res) => {
 
         if (existingUser) {
             if (existingUser.username === username && existingUser.email === email) {
-                return res.status(400).json({ error: "Username e email já estão em uso." });
+                return res.status(400).json({ error: "Username e email já estão em uso" });
             }
             if (existingUser.username === username) {
-                return res.status(400).json({ error: "Username já está em uso." });
+                return res.status(400).json({ error: "Username já está em uso" });
             }
             if (existingUser.email === email) {
-                return res.status(400).json({ error: "Email já está em uso." });
+                return res.status(400).json({ error: "Email já está em uso" });
             }
         }
 
@@ -37,7 +37,7 @@ app.post('/register', async (req, res) => {
         const newUser = await User.create({ username, email, password: hashedPassword });
         res.json(newUser);
     } catch (error) {
-        res.status(500).json({ error: "Erro ao registrar usuário." });
+        res.status(500).json({ error: "Erro ao registrar usuário" });
     }
 });
 
@@ -47,13 +47,13 @@ app.post('/login', async (req, res) => {
     const user = await User.findOne({ where: { email } });
 
     if (!user) {
-        return res.status(404).json({ error: "Usuário não encontrado." });
+        return res.status(404).json({ error: "Usuário não encontrado" });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-        return res.status(403).json({ error: "Senha incorreta." });
+        return res.status(403).json({ error: "Senha incorreta" });
     }
 
     const token = jwt.sign({ id: user.id }, 'secretkey', { expiresIn: '1h' });
@@ -65,10 +65,10 @@ app.post('/login', async (req, res) => {
 app.get('/profile', async (req, res) => {
     const token = req.headers['authorization'].split(' ')[1];
 
-    if (!token) return res.status(401).json({ error: "Token não fornecido." });
+    if (!token) return res.status(401).json({ error: "Token não fornecido" });
 
     jwt.verify(token, 'secretkey', async (err, decoded) => {
-        if (err) return res.status(403).json({ error: "Token inválido." });
+        if (err) return res.status(403).json({ error: "Token inválido" });
 
         const user = await User.findByPk(decoded.id, { attributes: { exclude: ['password'] } });
         res.json(user);
