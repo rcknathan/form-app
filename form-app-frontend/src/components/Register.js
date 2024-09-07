@@ -12,6 +12,8 @@ function Register() {
     const [password, setPassword] = useState('');
     const [passwordStrength, setPasswordStrength] = useState(0);
     const [passwordError, setPasswordError] = useState('');
+    const [usernameError, setUsernameError] = useState('');
+    const [emailError, setEmailError] = useState('');
     const [successMessage, setSuccessMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
@@ -21,26 +23,37 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Check if password is strong enough
         if (!isPasswordStrongEnough()) {
             setPasswordError('A senha deve ser no mínimo forte');
-            setSuccessMessage(''); // Clear success message if password is weak
-            setErrorMessage(''); // Clear error message if password is weak
-            return; // Exit the function if password is not strong enough
+            setSuccessMessage(''); 
+            setUsernameError('');
+            setEmailError(''); 
+            return; 
         }
 
-        // Clear error messages if password is strong
         setPasswordError('');
         setSuccessMessage('');
-        setErrorMessage('');
+        setUsernameError('');
+        setEmailError('');
 
         try {
             await axios.post('http://localhost:4000/register', { username, email, password });
             setSuccessMessage('Registro realizado com sucesso');
-            setTimeout(() => navigate('/login'), 2000); // Redirect after 2 seconds
+            setTimeout(() => navigate('/login'), 2000);
         } catch (error) {
             console.error('Erro ao registrar:', error);
-            setErrorMessage('Erro ao registrar');
+            if (error.response && error.response.data && error.response.data.error) {
+                const errorMessage = error.response.data.error;
+                if (errorMessage.includes('Username')) {
+                    setUsernameError(errorMessage);
+                } else if (errorMessage.includes('Email')) {
+                    setEmailError(errorMessage);
+                } else {
+                    setErrorMessage('Erro ao registrar');
+                }
+            } else {
+                setErrorMessage('Erro ao registrar');
+            }
         }
     };
 
@@ -83,6 +96,12 @@ function Register() {
                             <div className="error-container">
                                 {passwordError && (
                                     <p className="error">{passwordError}</p>
+                                )}
+                                {usernameError && (
+                                    <p className="error">{usernameError}</p>
+                                )}
+                                {emailError && (
+                                    <p className="error">{emailError}</p>
                                 )}
                                 {errorMessage && (
                                     <p className="error">{errorMessage}</p>

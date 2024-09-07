@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const User = require('./User');  // Modelo de usuário
+const { Op } = require('sequelize');
 
 const app = express();
 app.use(cors());
@@ -11,9 +12,28 @@ app.use(express.json());
 // Rota de registro
 app.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     try {
+        // Verifica se o email ou username já existem
+        const existingUser = await User.findOne({ 
+            where: {
+                [Op.or]: [{ username }, { email }]
+            }
+        });
+
+        if (existingUser) {
+            if (existingUser.username === username && existingUser.email === email) {
+                return res.status(400).json({ error: "Username e email já estão em uso." });
+            }
+            if (existingUser.username === username) {
+                return res.status(400).json({ error: "Username já está em uso." });
+            }
+            if (existingUser.email === email) {
+                return res.status(400).json({ error: "Email já está em uso." });
+            }
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = await User.create({ username, email, password: hashedPassword });
         res.json(newUser);
     } catch (error) {
