@@ -58,7 +58,7 @@ function Login() {
                             </div>
                             <div class="button-section">
                                 <button type="submit">ENTRAR</button>
-                                <button onClick={goToRegister}>REGISTRAR</button>
+                                <button onClick={goToRegister}>NÃO TENHO CONTA</button>
                             </div>
                         </form>
                     </div>

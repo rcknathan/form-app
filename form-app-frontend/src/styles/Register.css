@@ -1,11 +1,11 @@
 @keyframes slideUpFadeIn {
     0% {
-        transform: translateY(20px); /* Começa 20px abaixo da posição original */
-        opacity: 0; /* Começa invisível */
+        transform: translateY(20px); 
+        opacity: 0; 
     }
     100% {
-        transform: translateY(0); /* Termina na posição original */
-        opacity: 1; /* Torna-se totalmente visível */
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 
@@ -25,4 +25,36 @@
 
 .inputs-register {
     margin-left: 50px;
+}
+
+.back-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.back-login {
+    cursor: pointer;
+    color: #a1a1a1;
+    width: 110px;
+    margin-top: 15px;
+}
+
+.back-login:hover {
+    text-decoration: underline;
+}
+
+.error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 10px;
+    width: 430px;
+    margin-bottom: 10px;
+}
+
+.password-error {
+    color: #ff5959;
+    animation: slideUpFadeIn 0.8s ease-out;
+    font-size: 15px;
 }

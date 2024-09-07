@@ -10,18 +10,18 @@ function Register() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [passwordStrength, setPasswordStrength] = useState(0); // Novo estado para guardar a força da senha
+    const [passwordStrength, setPasswordStrength] = useState(0);
+    const [passwordError, setPasswordError] = useState('');
     const navigate = useNavigate();
 
-    // Função para verificar se a senha é forte o suficiente
-    const isPasswordStrongEnough = () => passwordStrength >= 4; // 4 = forte ou muito forte
+    const isPasswordStrongEnough = () => passwordStrength >= 4;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         
         if (!isPasswordStrongEnough()) {
-            alert('A senha deve ser forte ou muito forte.');
-            return; // Não permite o envio se a senha não for forte o suficiente
+            setPasswordError('A senha deve ser no mínimo forte');
+            return;
         }
 
         try {
@@ -70,10 +70,17 @@ function Register() {
                                     setPassword={setPassword} 
                                     setPasswordStrength={setPasswordStrength} 
                                 />
+                                <div class="error-container">
+                                    {passwordError && (
+                                        <p className="password-error">{passwordError}</p>
+                                    )}
+                                </div>
                             </div>
                         <div className="button-section">
                             <button type="submit">REGISTRAR</button>
-                            <button onClick={goToLogin}>VOLTAR AO LOGIN</button>
+                        </div>
+                        <div class="back-container">
+                            <a onClick={goToLogin} class="back-login">Voltar ao Login</a>
                         </div>
                     </form>
                 </div>
