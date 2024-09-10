@@ -2,12 +2,38 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const multer = require('multer');
+const path = require('path');
 const User = require('./User');  // Modelo de usuário
 const { Op } = require('sequelize');
+const fs = require('fs');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Configuração do multer para o upload de arquivos
+const upload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, 'uploads/');
+        },
+        filename: (req, file, cb) => {
+            const ext = path.extname(file.originalname);
+            cb(null, `${Date.now()}${ext}`);
+        }
+    }),
+    fileFilter: (req, file, cb) => {
+        const ext = path.extname(file.originalname);
+        if (ext !== '.jpg' && ext !== '.jpeg' && ext !== '.png') {
+            return cb(new Error('Somente arquivos .jpg, .jpeg e .png são permitidos'));
+        }
+        cb(null, true);
+    }
+});
+
+// Middleware para servir arquivos estáticos da pasta uploads
+app.use('/uploads', express.static('uploads'));
 
 // Rota de registro
 app.post('/register', async (req, res) => {
@@ -15,7 +41,7 @@ app.post('/register', async (req, res) => {
 
     try {
         // Verifica se o email ou username já existem
-        const existingUser = await User.findOne({ 
+        const existingUser = await User.findOne({
             where: {
                 [Op.or]: [{ username }, { email }]
             }
@@ -75,6 +101,34 @@ app.get('/profile', async (req, res) => {
     });
 });
 
+// Rota para atualizar a foto de perfil
+app.post('/profile/avatar', upload.single('avatar'), async (req, res) => {
+    const token = req.headers['authorization'].split(' ')[1];
+
+    if (!token) return res.status(401).json({ error: "Token não fornecido" });
+
+    jwt.verify(token, 'secretkey', async (err, decoded) => {
+        if (err) return res.status(403).json({ error: "Token inválido" });
+
+        const user = await User.findByPk(decoded.id);
+        if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
+
+        // Se uma foto antiga existir, exclua-a
+        if (user.avatar) {
+            fs.unlink(path.join('uploads', user.avatar), (err) => {
+                if (err) console.error('Erro ao excluir foto antiga:', err);
+            });
+        }
+
+        // Atualize o caminho da nova foto no banco de dados
+        user.avatar = req.file.filename;
+        await user.save();
+
+        res.json({ avatar: `/uploads/${user.avatar}` });
+    });
+});
+
+// Inicializa a tabela de usuários
 app.listen(4000, () => {
     console.log('Servidor rodando na porta 4000');
 });

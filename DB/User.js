@@ -15,6 +15,10 @@ const User = sequelize.define('User', {
     password: {
         type: DataTypes.STRING,
         allowNull: false
+    },
+    avatar: {
+        type: DataTypes.STRING, // Armazena a URL ou caminho da foto de perfil
+        allowNull: true
     }
 });
 
