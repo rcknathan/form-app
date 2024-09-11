@@ -101,7 +101,7 @@ app.get('/profile', async (req, res) => {
     });
 });
 
-// Rota para atualizar a foto de perfil
+// Na função de atualização de foto
 app.post('/profile/avatar', upload.single('avatar'), async (req, res) => {
     const token = req.headers['authorization'].split(' ')[1];
 
@@ -115,16 +115,55 @@ app.post('/profile/avatar', upload.single('avatar'), async (req, res) => {
 
         // Se uma foto antiga existir, exclua-a
         if (user.avatar) {
-            fs.unlink(path.join('uploads', user.avatar), (err) => {
-                if (err) console.error('Erro ao excluir foto antiga:', err);
+            const oldPath = path.join('uploads', user.avatar);
+            fs.unlink(oldPath, (err) => {
+                if (err) {
+                    console.error('Erro ao excluir foto antiga:', err);
+                    return res.status(500).json({ error: 'Erro ao excluir foto antiga' });
+                }
+                console.log('Foto antiga excluída:', oldPath);
             });
         }
+
+        // Verifique se o arquivo foi enviado
+        if (!req.file) {
+            return res.status(400).json({ error: "Nenhum arquivo enviado" });
+        }
+
+        console.log('Arquivo recebido:', req.file);
 
         // Atualize o caminho da nova foto no banco de dados
         user.avatar = req.file.filename;
         await user.save();
 
         res.json({ avatar: `/uploads/${user.avatar}` });
+    });
+});
+
+// Rota para remover a foto de perfil
+app.post('/profile/remove-avatar', async (req, res) => {
+    const token = req.headers['authorization'].split(' ')[1];
+
+    if (!token) return res.status(401).json({ error: "Token não fornecido" });
+
+    jwt.verify(token, 'secretkey', async (err, decoded) => {
+        if (err) return res.status(403).json({ error: "Token inválido" });
+
+        const user = await User.findByPk(decoded.id);
+        if (!user) return res.status(404).json({ error: "Usuário não encontrado" });
+
+        // Se uma foto existir, exclua-a
+        if (user.avatar) {
+            fs.unlink(path.join('uploads', user.avatar), (err) => {
+                if (err) console.error('Erro ao excluir foto:', err);
+            });
+
+            // Limpe o campo da foto no banco de dados
+            user.avatar = null;
+            await user.save();
+        }
+
+        res.json({ message: "Foto de perfil removida com sucesso" });
     });
 });
 
