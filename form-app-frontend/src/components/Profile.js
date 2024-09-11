@@ -1,16 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import profileImage from '../images/profile-img.png';
+import profileImage from '../images/profile-img.jpg';
 import '../styles/Profile.css';
 
 function Profile() {
     const [user, setUser] = useState(null);
     const [menuVisible, setMenuVisible] = useState(false);
+    const [headerMenuVisible, setHeaderMenuVisible] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const navigate = useNavigate();
     const fileInputRef = useRef(null);
     const menuRef = useRef(null);
+    const headerMenuRef = useRef(null);
 
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
@@ -84,6 +86,9 @@ function Profile() {
             if (menuRef.current && !menuRef.current.contains(event.target)) {
                 setMenuVisible(false);
             }
+            if (headerMenuRef.current && !headerMenuRef.current.contains(event.target)) {
+                setHeaderMenuVisible(false);
+            }
         };
         document.addEventListener('mousedown', handleClickOutside);
         return () => {
@@ -91,10 +96,29 @@ function Profile() {
         };
     }, []);
 
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        navigate('/login');
+    };
+
     return (
         <div className="main-profile">
             <div className="header">
                 <h2>Meu Perfil</h2>
+                <div className="header-profile-img-container">
+                    <img 
+                        src={user?.avatar ? `http://localhost:4000/uploads/${user.avatar}?${new Date().getTime()}` : profileImage} 
+                        alt="Profile" 
+                        onClick={() => setHeaderMenuVisible(!headerMenuVisible)}
+                        style={{ cursor: 'pointer' }}
+                    />
+                    <div 
+                        className={`header-profile-menu ${headerMenuVisible ? 'show' : ''}`} 
+                        ref={headerMenuRef}
+                    >
+                        <button onClick={handleLogout}>Sair</button>
+                    </div>
+                </div>
             </div>
 
             <div className="body">
